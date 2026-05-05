@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from models import Borrow, Item
+from models import Borrow, Item, ActivityLog
 from schemas import BorrowCreate, BorrowResponse
 from datetime import datetime
 
@@ -74,3 +74,17 @@ def return_item(borrow_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+
+from models import ActivityLog
+
+log = ActivityLog(
+    action="BORROW",
+    item_id=data.item_id
+)
+db.add(log)
+
+log = ActivityLog(
+    action="RETURN",
+    item_id=borrow.item_id
+)
+db.add(log)
