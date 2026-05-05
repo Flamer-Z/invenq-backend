@@ -1,15 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
-
-# =====================
-# ITEM SCHEMA
-# =====================
 
 class ItemCreate(BaseModel):
     name: str
-    quantity: int
+    quantity: int = Field(..., ge=0)
     condition: str
-    price: int
+    price: int = Field(..., ge=0)
     location: str
 
 
