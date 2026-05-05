@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import Borrow, Item
@@ -20,10 +20,10 @@ def borrow_item(data: BorrowCreate, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == data.item_id).first()
 
     if not item:
-        return {"error": "Item not found"}
-
+        raise HTTPException(status_code=404, detail="Item not found")
+    
     if item.quantity <= 0:
-        return {"error": "Stock empty"}
+        raise HTTPException(status_code=400, detail="Stock empty")
 
     item.quantity -= 1
 
@@ -49,10 +49,10 @@ def return_item(borrow_id: int, db: Session = Depends(get_db)):
     borrow = db.query(Borrow).filter(Borrow.id == borrow_id).first()
 
     if not borrow:
-        return {"error": "Borrow not found"}
-
+        raise HTTPException(status_code=404, detail="Borrow not found")
+    
     if borrow.status == "returned":
-        return {"error": "Already returned"}
+        raise HTTPException(status_code=400, detail="Already returned")
 
     borrow.status = "returned"
     borrow.return_date = datetime.utcnow()
