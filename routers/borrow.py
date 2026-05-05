@@ -14,6 +14,7 @@ def get_db():
     finally:
         db.close()
 
+
 @router.post("/borrow", response_model=BorrowResponse)
 def borrow_item(data: BorrowCreate, db: Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == data.item_id).first()
@@ -33,6 +34,13 @@ def borrow_item(data: BorrowCreate, db: Session = Depends(get_db)):
         )
 
         db.add(borrow)
+
+        log = ActivityLog(
+            action="BORROW",
+            item_id=data.item_id
+        )
+        db.add(log)
+
         db.commit()
         db.refresh(borrow)
 
@@ -41,7 +49,7 @@ def borrow_item(data: BorrowCreate, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
-        
+
 @router.get("/borrow", response_model=list[BorrowResponse])
 def get_borrows(db: Session = Depends(get_db)):
     return db.query(Borrow).all()
@@ -67,6 +75,12 @@ def return_item(borrow_id: int, db: Session = Depends(get_db)):
 
         item.quantity += 1
 
+        log = ActivityLog(
+            action="RETURN",
+            item_id=borrow.item_id
+        )
+        db.add(log)
+
         db.commit()
 
         return {"message": "Item returned successfully"}
@@ -74,17 +88,3 @@ def return_item(borrow_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
-
-from models import ActivityLog
-
-log = ActivityLog(
-    action="BORROW",
-    item_id=data.item_id
-)
-db.add(log)
-
-log = ActivityLog(
-    action="RETURN",
-    item_id=borrow.item_id
-)
-db.add(log)
