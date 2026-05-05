@@ -15,7 +15,6 @@ class Item(Base):
 
     borrows = relationship("Borrow", back_populates="item")
 
-
 class Borrow(Base):
     __tablename__ = "borrows"
 
@@ -25,5 +24,12 @@ class Borrow(Base):
     borrow_date = Column(DateTime, default=datetime.utcnow)
     return_date = Column(DateTime, nullable=True)
     status = Column(String, default="borrowed")
-
     item = relationship("Item", back_populates="borrows")
+
+class ActivityLog(Base):
+    __tablename__ = "activity_logs"
+
+    id = Column(Integer, primary_key=True)
+    action = Column(String)
+    item_id = Column(Integer)
+    timestamp = Column(DateTime, default=datetime.utcnow)
