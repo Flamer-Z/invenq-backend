@@ -1,26 +1,18 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from database import SessionLocal
-from models import Item, Borrow
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-router = APIRouter()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+if not DATABASE_URL:
+    raise Exception("DATABASE_URL not found ❌")
 
+engine = create_engine(DATABASE_URL)
 
-@router.get("/dashboard")
-def get_dashboard(db: Session = Depends(get_db)):
-    total_items = db.query(Item).count()
-    borrowed = db.query(Borrow).filter(Borrow.status == "borrowed").count()
-    available = db.query(Item).filter(Item.quantity > 0).count()
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
 
-    return {
-        "total_items": total_items,
-        "borrowed_items": borrowed,
-        "available_items": available
-    }
+Base = declarative_base()
