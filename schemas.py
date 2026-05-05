@@ -33,5 +33,15 @@ class BorrowResponse(BaseModel):
     return_date: datetime | None
     status: str
 
-    class Config:
-        from_attributes = True
+class Config:
+    from_attributes = True
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    role: str = "staff"
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
