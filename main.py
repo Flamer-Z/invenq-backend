@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from database import Base, engine
-from routers import items, borrow, dashboard, logs
+from routers import items, borrow, dashboard, logs, users
 
 app = FastAPI()
 
@@ -10,6 +10,7 @@ app.include_router(items.router)
 app.include_router(borrow.router)
 app.include_router(dashboard.router)
 app.include_router(logs.router)
+app.include_router(users.router)
 
 @app.get("/")
 def root():
