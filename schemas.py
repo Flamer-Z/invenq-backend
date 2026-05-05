@@ -1,9 +1,33 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+# =====================
+# ITEM SCHEMA
+# =====================
+
+class ItemCreate(BaseModel):
+    name: str
+    quantity: int
+    condition: str
+    price: int
+    location: str
+
+
+class ItemResponse(BaseModel):
+    id: int
+    name: str
+    quantity: int
+    condition: str
+    price: int
+    location: str
+
+    class Config:
+        from_attributes = True
+
 class BorrowCreate(BaseModel):
     item_id: int
     borrower_name: str
+
 
 class BorrowResponse(BaseModel):
     id: int
