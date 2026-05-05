@@ -33,3 +33,12 @@ class ActivityLog(Base):
     action = Column(String)
     item_id = Column(Integer)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True)
+    password = Column(String)
+    role = Column(String, default="staff")
+
