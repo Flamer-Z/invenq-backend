@@ -52,7 +52,10 @@ def borrow_item(data: BorrowCreate, db: Session = Depends(get_db)):
 
 @router.get("/borrow", response_model=list[BorrowResponse])
 def get_borrows(db: Session = Depends(get_db)):
-    return db.query(Borrow).all()
+
+    return db.query(Borrow).filter(
+        Borrow.status != "returned"
+    ).all()
 
 @router.put("/return/{borrow_id}")
 def return_item(borrow_id: int, db: Session = Depends(get_db)):
