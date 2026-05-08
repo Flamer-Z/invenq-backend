@@ -12,6 +12,7 @@ class Item(Base):
     condition = Column(String)
     price = Column(Integer)
     location = Column(String)
+    image_url = Column(String, nullable=True) # Tambahan baru
 
     borrows = relationship("Borrow", back_populates="item")
 
@@ -41,4 +42,3 @@ class User(Base):
     username = Column(String, unique=True)
     password = Column(String)
     role = Column(String, default="staff")
-
